@@ -34,3 +34,19 @@ export const steps = sqliteTable("steps", {
   isComplete: integer("is_complete", { mode: "boolean" }).notNull().default(false),
   sortOrder: integer("sort_order").notNull(),
 });
+
+export const dailyCompletions = sqliteTable("daily_completions", {
+  id: text("id").primaryKey(),
+  date: text("date").notNull().unique(), // YYYY-MM-DD
+  tasksCompleted: integer("tasks_completed").notNull(),
+  totalTasks: integer("total_tasks").notNull(),
+  allDone: integer("all_done", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
+export const userProfile = sqliteTable("user_profile", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  avatarColor: text("avatar_color").notNull().default("#7c3aed"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});

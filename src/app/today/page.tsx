@@ -53,6 +53,8 @@ export default function TodayPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ taskId, status: next }),
     });
+    // Sync streak
+    fetch("/api/streak", { method: "POST" });
   }
 
   async function toggleStep(stepId: string, current: boolean) {
