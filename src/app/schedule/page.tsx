@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
-interface FullTask { id: string; title: string; priority: string; status: string; category: string | null; }
+interface FullTask { id: string; planId: string; title: string; priority: string; status: string; category: string | null; }
 interface StreakDay { date: string; completed: boolean; tasksCompleted: number; totalTasks: number; }
 
 export default function SchedulePage() {
@@ -11,6 +11,14 @@ export default function SchedulePage() {
   const [streakData, setStreakData] = useState<{ calendar: StreakDay[]; streak: number }>({ calendar: [], streak: 0 });
   const [loading, setLoading] = useState(true);
   const [weekOffset, setWeekOffset] = useState(0);
+  const [editMode, setEditMode] = useState(false);
+  const [reminders, setReminders] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("braindump-reminders");
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    }
+    return new Set();
+  });
 
   useEffect(() => {
     Promise.all([
@@ -18,6 +26,24 @@ export default function SchedulePage() {
       fetch("/api/streak").then((r) => r.json()).catch(() => ({ calendar: [], streak: 0 })),
     ]).then(([t, s]) => { setTasks(Array.isArray(t) ? t : []); setStreakData(s); setLoading(false); });
   }, []);
+
+  async function changePriority(taskId: string, planId: string, newPriority: string) {
+    setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, priority: newPriority } : t)));
+    await fetch(`/api/plans/${planId}/tasks`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "edit", taskId, priority: newPriority }),
+    });
+  }
+
+  function toggleReminder(taskId: string) {
+    setReminders((prev) => {
+      const next = new Set(prev);
+      if (next.has(taskId)) { next.delete(taskId); } else { next.add(taskId); }
+      localStorage.setItem("braindump-reminders", JSON.stringify([...next]));
+      return next;
+    });
+  }
 
   const today = new Date();
   const startOfWeek = new Date(today);
@@ -28,6 +54,7 @@ export default function SchedulePage() {
   const active = tasks.filter((t) => t.status !== "done");
   const done = tasks.filter((t) => t.status === "done").length;
   const pDot: Record<string, string> = { high: "bg-red-500", medium: "bg-amber-500", low: "bg-emerald-500" };
+  const pDotInline: Record<string, string> = { high: "#ef4444", medium: "#f59e0b", low: "#10b981" };
   const groups = { high: active.filter((t) => t.priority === "high"), medium: active.filter((t) => t.priority === "medium"), low: active.filter((t) => t.priority === "low") };
   const labels: Record<string, string> = { high: "Urgent", medium: "Medium", low: "Low Priority" };
 
@@ -37,9 +64,19 @@ export default function SchedulePage() {
     <div className="mx-auto max-w-5xl px-5 py-5">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-zinc-900">Schedule</h1>
-        <div className="flex gap-2 text-xs">
-          <span className="rounded-lg bg-zinc-100 px-2.5 py-1 font-medium text-zinc-600">{active.length} active</span>
-          <span className="rounded-lg bg-emerald-50 px-2.5 py-1 font-medium text-emerald-600">{done} done</span>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-2 text-xs">
+            <span className="rounded-lg bg-zinc-100 px-2.5 py-1 font-medium text-zinc-600">{active.length} active</span>
+            <span className="rounded-lg bg-emerald-50 px-2.5 py-1 font-medium text-emerald-600">{done} done</span>
+          </div>
+          {active.length > 0 && (
+            <button
+              onClick={() => setEditMode(!editMode)}
+              className={clsx("rounded-xl px-4 py-2 text-sm font-medium", editMode ? "bg-violet-600 text-white" : "border border-zinc-200 text-zinc-600 hover:bg-zinc-50")}
+            >
+              {editMode ? "Done" : "Edit"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -94,9 +131,38 @@ export default function SchedulePage() {
                 {groups[p].map((task) => (
                   <div key={task.id} className={clsx("flex items-center gap-3 rounded-xl border px-4 py-2.5",
                     task.status === "in_progress" ? "border-violet-200" : "border-zinc-200")}>
-                    <div className={clsx("h-2 w-2 rounded-full shrink-0", task.status === "in_progress" ? "bg-violet-500" : "bg-zinc-300")} />
+                    <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: task.status === "in_progress" ? "#7c3aed" : pDotInline[task.priority] }} />
                     <span className="flex-1 text-sm font-medium text-zinc-700">{task.title}</span>
-                    {task.category && <span className="rounded-lg bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{task.category}</span>}
+
+                    {editMode ? (
+                      <div className="flex items-center gap-2 shrink-0">
+                        {/* Priority selector */}
+                        <select
+                          value={task.priority}
+                          onChange={(e) => changePriority(task.id, task.planId, e.target.value)}
+                          className="rounded-lg border border-zinc-200 px-2 py-1 text-xs font-medium text-zinc-600 outline-none"
+                          style={{ background: "white" }}
+                        >
+                          <option value="high">Urgent</option>
+                          <option value="medium">Medium</option>
+                          <option value="low">Low</option>
+                        </select>
+                        {/* Reminder toggle */}
+                        <button
+                          onClick={() => toggleReminder(task.id)}
+                          className={clsx("rounded-lg px-2.5 py-1 text-xs font-medium transition-colors",
+                            reminders.has(task.id) ? "bg-violet-100 text-violet-700" : "bg-zinc-100 text-zinc-400 hover:text-zinc-600")}
+                          title={reminders.has(task.id) ? "Reminder on" : "Set reminder"}
+                        >
+                          {reminders.has(task.id) ? "🔔 On" : "🔕 Off"}
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        {reminders.has(task.id) && <span className="text-xs" title="Reminder set">🔔</span>}
+                        {task.category && <span className="rounded-lg bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-500">{task.category}</span>}
+                      </>
+                    )}
                   </div>
                 ))}
               </div>
