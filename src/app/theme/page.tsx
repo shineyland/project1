@@ -111,9 +111,7 @@ export default function ThemePage() {
                   className="h-14 w-14 rounded-2xl shadow-sm transition-all"
                   style={{
                     backgroundColor: c.value,
-                    outline: accent === c.value ? "3px solid" : "none",
-                    outlineColor: c.value,
-                    outlineOffset: "4px",
+                    boxShadow: accent === c.value ? `0 0 0 4px white, 0 0 0 6px ${c.value}` : "none",
                   }}
                 />
                 <span className="text-xs font-medium text-zinc-500">{c.name}</span>
@@ -141,9 +139,7 @@ export default function ThemePage() {
                   className="h-10 w-10 rounded-full transition-all hover:scale-110"
                   style={{
                     backgroundColor: color,
-                    outline: avatarColor === color ? "3px solid" : "none",
-                    outlineColor: color,
-                    outlineOffset: "3px",
+                    boxShadow: avatarColor === color ? `0 0 0 3px white, 0 0 0 5px ${color}` : "none",
                   }}
                 />
               ))}

@@ -79,9 +79,7 @@ export default function LoginPage() {
                   className="h-10 w-10 rounded-full transition-all hover:scale-110"
                   style={{
                     backgroundColor: color,
-                    outline: selectedColor === color ? "3px solid" : "none",
-                    outlineColor: color,
-                    outlineOffset: "3px",
+                    boxShadow: selectedColor === color ? `0 0 0 3px white, 0 0 0 5px ${color}` : "none",
                   }}
                 />
               ))}
