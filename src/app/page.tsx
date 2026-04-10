@@ -121,8 +121,7 @@ export default function HomePage() {
         <div className="rounded-2xl border-2 border-dashed border-zinc-200 py-12 text-center">
           <p className="text-3xl mb-3">&#128161;</p>
           <p className="text-lg font-semibold text-zinc-700">No tasks yet</p>
-          <p className="text-sm text-zinc-400 mt-1">Brain dump your thoughts to get started</p>
-          <button onClick={() => setShowDump(true)} className="mt-4 rounded-xl bg-violet-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-violet-700">Start Brain Dump</button>
+          <p className="text-sm text-zinc-400 mt-1">Click <strong>+ Brain Dump</strong> above to get started</p>
         </div>
       )}
 
