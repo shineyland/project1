@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { plans, tasks, steps } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { SavedCategory } from "@/lib/types";
 
 export async function GET(
@@ -87,16 +87,31 @@ export async function PUT(
   const { id } = await params;
   const body = await request.json();
 
-  // Update task status
+  // Update task status — verify task belongs to this plan
   if (body.taskId && body.status) {
+    const task = await db.query.tasks.findFirst({
+      where: and(eq(tasks.id, body.taskId), eq(tasks.planId, id)),
+    });
+    if (!task) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
     await db
       .update(tasks)
       .set({ status: body.status })
       .where(eq(tasks.id, body.taskId));
   }
 
-  // Toggle step completion
+  // Toggle step completion — verify step belongs to a task in this plan
   if (body.stepId !== undefined && body.isComplete !== undefined) {
+    const rows = await db
+      .select({ stepId: steps.id })
+      .from(steps)
+      .innerJoin(tasks, and(eq(tasks.id, steps.taskId), eq(tasks.planId, id)))
+      .where(eq(steps.id, body.stepId))
+      .limit(1);
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "Step not found" }, { status: 404 });
+    }
     await db
       .update(steps)
       .set({ isComplete: body.isComplete })
