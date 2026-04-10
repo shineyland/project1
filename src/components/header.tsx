@@ -6,12 +6,10 @@ import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
 const navItems = [
-  { href: "/", label: "Dump" },
-  { href: "/today", label: "Today" },
-  { href: "/tasks", label: "Tasks" },
-  { href: "/plans", label: "Plans" },
+  { href: "/", label: "Checklist" },
+  { href: "/schedule", label: "Schedule" },
+  { href: "/calendar", label: "Calendar" },
   { href: "/streak", label: "Streak" },
-  { href: "/insights", label: "Insights" },
   { href: "/theme", label: "Theme" },
 ];
 
@@ -82,10 +80,7 @@ export function Header() {
 
         {profile && initials && (
           <Link href="/login" className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 hover:bg-zinc-50 transition-colors" title="Edit profile">
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white"
-              style={{ backgroundColor: profile.avatarColor || "#7c3aed" }}
-            >
+            <div className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white" style={{ backgroundColor: profile.avatarColor || "#7c3aed" }}>
               {initials}
             </div>
             <span className="text-sm font-medium text-zinc-700 hidden sm:block">{profile.name.split(" ")[0]}</span>

@@ -15,6 +15,13 @@
       "when": 1775841979735,
       "tag": "0001_deep_skreet",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1775844845390,
+      "tag": "0002_dusty_elektra",
+      "breakpoints": true
     }
   ]
 }

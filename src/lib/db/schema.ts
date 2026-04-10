@@ -44,6 +44,14 @@ export const dailyCompletions = sqliteTable("daily_completions", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 });
 
+export const calendarNotes = sqliteTable("calendar_notes", {
+  id: text("id").primaryKey(),
+  date: text("date").notNull(), // YYYY-MM-DD
+  content: text("content").notNull(),
+  emoji: text("emoji").notNull().default("📌"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
 export const userProfile = sqliteTable("user_profile", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
