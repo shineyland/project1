@@ -22,6 +22,8 @@ export const tasks = sqliteTable("tasks", {
     .notNull()
     .default("todo"),
   sortOrder: integer("sort_order").notNull(),
+  scheduledTime: text("scheduled_time"), // "HH:MM" format, e.g. "09:00"
+  duration: integer("duration"), // minutes
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 });
 

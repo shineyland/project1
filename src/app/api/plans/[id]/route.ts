@@ -60,6 +60,8 @@ export async function GET(
       priority: task.priority as "high" | "medium" | "low",
       status: task.status as "todo" | "in_progress" | "done",
       sortOrder: task.sortOrder,
+      scheduledTime: task.scheduledTime,
+      duration: task.duration,
       steps: (stepsByTaskId[task.id] || []).map((s) => ({
         id: s.id,
         content: s.content,

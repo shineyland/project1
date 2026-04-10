@@ -14,6 +14,8 @@ export interface TaskItem {
   title: string;
   description: string | null;
   priority: "high" | "medium" | "low";
+  scheduledTime: string; // "HH:MM"
+  duration: number; // minutes
   steps: string[];
 }
 
@@ -41,6 +43,8 @@ export interface SavedTask {
   priority: "high" | "medium" | "low";
   status: "todo" | "in_progress" | "done";
   sortOrder: number;
+  scheduledTime: string | null;
+  duration: number | null;
   steps: SavedStep[];
 }
 

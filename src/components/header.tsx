@@ -6,8 +6,7 @@ import { useEffect, useState } from "react";
 import { clsx } from "clsx";
 
 const navItems = [
-  { href: "/", label: "Checklist" },
-  { href: "/schedule", label: "Schedule" },
+  { href: "/", label: "My Day" },
   { href: "/calendar", label: "Calendar" },
   { href: "/streak", label: "Streak" },
   { href: "/theme", label: "Theme" },

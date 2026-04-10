@@ -87,6 +87,8 @@ export async function POST(request: Request) {
         priority: task.priority,
         status: "todo",
         sortOrder: sortOrder++,
+        scheduledTime: task.scheduledTime || null,
+        duration: task.duration || null,
         createdAt: now,
       });
 
