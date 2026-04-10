@@ -44,15 +44,10 @@ export default function TodayPage() {
   }, []);
 
   async function toggleStatus(taskId: string) {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id !== taskId) return t;
-        const next = t.status === "todo" ? "in_progress" : t.status === "in_progress" ? "done" : "todo";
-        return { ...t, status: next };
-      })
-    );
     const task = tasks.find((t) => t.id === taskId);
-    const next = task?.status === "todo" ? "in_progress" : task?.status === "in_progress" ? "done" : "todo";
+    if (!task) return;
+    const next = task.status === "todo" ? "in_progress" : task.status === "in_progress" ? "done" : "todo";
+    setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: next } : t)));
     await fetch("/api/tasks", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -82,7 +77,6 @@ export default function TodayPage() {
     });
   }
 
-  // Focus tasks: high priority not done, then in_progress, then medium todo
   const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
   const statusOrder: Record<string, number> = { in_progress: 0, todo: 1, done: 2 };
 
@@ -106,19 +100,18 @@ export default function TodayPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet-100 border-t-violet-600" />
+      <div className="flex items-center justify-center py-24">
+        <div className="h-10 w-10 animate-spin rounded-full border-3 border-violet-100 border-t-violet-600" />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      {/* Header */}
-      <div className="mb-6">
-        <p className="text-sm font-medium text-violet-600">{today}</p>
-        <h1 className="text-2xl font-bold text-zinc-900 mt-1">Today&apos;s Focus</h1>
-        <div className="mt-3 flex items-center gap-4 text-sm">
+    <div className="mx-auto max-w-4xl px-6 py-10">
+      <div className="mb-8">
+        <p className="text-base font-medium text-violet-600">{today}</p>
+        <h1 className="text-3xl font-bold text-zinc-900 mt-2">Today&apos;s Focus</h1>
+        <div className="mt-4 flex items-center gap-5 text-base">
           <span className="text-zinc-500"><span className="font-semibold text-zinc-700">{focusTasks.length}</span> tasks remaining</span>
           {urgentCount > 0 && <span className="text-red-500 font-medium">{urgentCount} urgent</span>}
           {inProgressCount > 0 && <span className="text-blue-500 font-medium">{inProgressCount} in progress</span>}
@@ -127,19 +120,18 @@ export default function TodayPage() {
       </div>
 
       {focusTasks.length === 0 && completedToday.length === 0 && (
-        <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white py-14 text-center">
-          <p className="text-3xl mb-3">&#127881;</p>
-          <p className="font-medium text-zinc-700">No tasks yet</p>
-          <p className="mt-1 text-sm text-zinc-400">Brain dump some thoughts to get started</p>
-          <Link href="/" className="mt-4 inline-flex rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700">
+        <div className="rounded-2xl border-2 border-dashed border-zinc-200 bg-white py-16 text-center">
+          <p className="text-4xl mb-4">&#127881;</p>
+          <p className="text-lg font-medium text-zinc-700">No tasks yet</p>
+          <p className="mt-2 text-base text-zinc-400">Brain dump some thoughts to get started</p>
+          <Link href="/" className="mt-5 inline-flex rounded-xl bg-violet-600 px-7 py-3 text-base font-semibold text-white hover:bg-violet-700">
             New Brain Dump
           </Link>
         </div>
       )}
 
-      {/* Focus tasks */}
       {focusTasks.length > 0 && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {focusTasks.map((task) => {
             const pc = priorityConfig[task.priority] || priorityConfig.low;
             const isExpanded = expandedSteps.has(task.id);
@@ -147,33 +139,33 @@ export default function TodayPage() {
 
             return (
               <div key={task.id} className={clsx(
-                "rounded-xl border bg-white p-4 transition-all hover:shadow-sm",
+                "rounded-2xl border bg-white p-6 transition-all hover:shadow-sm",
                 task.status === "in_progress" ? "border-violet-200 bg-violet-50/30" : "border-zinc-200"
               )}>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-4">
                   <button
                     onClick={() => toggleStatus(task.id)}
                     className={clsx(
-                      "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
+                      "mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all",
                       task.status === "in_progress"
                         ? "border-violet-500 bg-violet-50"
                         : "border-zinc-300 hover:border-zinc-400"
                     )}
                   >
-                    {task.status === "in_progress" && <div className="h-2 w-2 rounded-full bg-violet-500" />}
+                    {task.status === "in_progress" && <div className="h-2.5 w-2.5 rounded-full bg-violet-500" />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-medium text-[15px] text-zinc-800">{task.title}</span>
-                      <span className={clsx("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold", pc.bg, pc.text)}>
-                        <span className={clsx("h-1.5 w-1.5 rounded-full", pc.dot)} />
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <span className="font-semibold text-lg text-zinc-800">{task.title}</span>
+                      <span className={clsx("inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold", pc.bg, pc.text)}>
+                        <span className={clsx("h-2 w-2 rounded-full", pc.dot)} />
                         {pc.label}
                       </span>
                     </div>
                     {task.description && (
-                      <p className="mt-1 text-sm text-zinc-500">{task.description}</p>
+                      <p className="mt-2 text-base text-zinc-500">{task.description}</p>
                     )}
-                    <div className="mt-2 flex items-center gap-3 text-xs text-zinc-400">
+                    <div className="mt-3 flex items-center gap-4 text-sm text-zinc-400">
                       <Link href={`/plan/${task.planId}`} className="hover:text-violet-600 transition-colors">
                         {task.planTitle}
                       </Link>
@@ -193,14 +185,14 @@ export default function TodayPage() {
                       )}
                     </div>
                     {isExpanded && task.steps.length > 0 && (
-                      <ul className="mt-3 space-y-1.5 pl-0.5 border-t border-zinc-100 pt-3">
+                      <ul className="mt-4 space-y-2.5 pl-1 border-t border-zinc-100 pt-4">
                         {task.steps.map((step) => (
-                          <li key={step.id} className="flex items-start gap-2.5 text-sm">
+                          <li key={step.id} className="flex items-start gap-3 text-base">
                             <input
                               type="checkbox"
                               checked={step.isComplete}
                               onChange={() => toggleStep(step.id, step.isComplete)}
-                              className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-violet-600"
+                              className="mt-1 h-5 w-5 rounded border-zinc-300 text-violet-600"
                             />
                             <span className={clsx(step.isComplete && "line-through text-zinc-400")}>
                               {step.content}
@@ -217,25 +209,24 @@ export default function TodayPage() {
         </div>
       )}
 
-      {/* Completed section */}
       {completedToday.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-3">
+        <div className="mt-10">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-4">
             Completed ({completedToday.length})
           </h2>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {completedToday.map((task) => (
-              <div key={task.id} className="flex items-center gap-3 rounded-lg border border-emerald-100 bg-emerald-50/30 px-4 py-2.5">
+              <div key={task.id} className="flex items-center gap-4 rounded-xl border border-emerald-100 bg-emerald-50/30 px-6 py-4">
                 <button
                   onClick={() => toggleStatus(task.id)}
-                  className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 border-emerald-500 bg-emerald-500"
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 border-emerald-500 bg-emerald-500"
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </button>
-                <span className="text-sm text-zinc-400 line-through">{task.title}</span>
-                <span className="ml-auto text-xs text-zinc-300">{task.planTitle}</span>
+                <span className="text-base text-zinc-400 line-through">{task.title}</span>
+                <span className="ml-auto text-sm text-zinc-300">{task.planTitle}</span>
               </div>
             ))}
           </div>

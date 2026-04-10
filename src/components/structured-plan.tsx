@@ -14,16 +14,16 @@ export function StructuredPlanPreview({ plan, onSave, isSaving }: StructuredPlan
   const totalTasks = plan.categories.reduce((acc, c) => acc + c.tasks.length, 0);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-6">
-        <div className="flex items-start justify-between gap-4">
+    <div className="space-y-8">
+      <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-8">
+        <div className="flex items-start justify-between gap-6">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-violet-500 mb-1.5">AI-Organized Plan</p>
-            <h2 className="text-xl font-bold text-zinc-900">{plan.title}</h2>
+            <p className="text-sm font-semibold uppercase tracking-wider text-violet-500 mb-2">AI-Organized Plan</p>
+            <h2 className="text-2xl font-bold text-zinc-900">{plan.title}</h2>
             {plan.summary && (
-              <p className="mt-1.5 text-sm text-zinc-500 leading-relaxed">{plan.summary}</p>
+              <p className="mt-2 text-base text-zinc-500 leading-relaxed">{plan.summary}</p>
             )}
-            <div className="mt-3 flex items-center gap-3 text-xs text-zinc-400">
+            <div className="mt-4 flex items-center gap-4 text-sm text-zinc-400">
               <span>{plan.categories.length} categories</span>
               <span className="h-1 w-1 rounded-full bg-zinc-300" />
               <span>{totalTasks} tasks</span>
@@ -32,13 +32,13 @@ export function StructuredPlanPreview({ plan, onSave, isSaving }: StructuredPlan
           <button
             onClick={onSave}
             disabled={isSaving}
-            className="shrink-0 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-violet-700 hover:shadow active:scale-[0.98] disabled:opacity-50"
+            className="shrink-0 rounded-xl bg-violet-600 px-7 py-3 text-base font-semibold text-white shadow-sm transition-all hover:bg-violet-700 hover:shadow active:scale-[0.98] disabled:opacity-50"
           >
             {isSaving ? "Saving..." : "Save Plan"}
           </button>
         </div>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {plan.categories.map((category) => (
           <CategoryGroup
             key={category.name}
@@ -64,26 +64,26 @@ export function StructuredPlanSaved({ plan }: StructuredPlanSavedProps) {
   const progress = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-zinc-900">{plan.title}</h2>
+    <div className="space-y-8">
+      <div className="rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+        <h2 className="text-2xl font-bold text-zinc-900">{plan.title}</h2>
         {plan.summary && (
-          <p className="mt-1.5 text-sm text-zinc-500 leading-relaxed">{plan.summary}</p>
+          <p className="mt-2 text-base text-zinc-500 leading-relaxed">{plan.summary}</p>
         )}
-        <div className="mt-4 flex items-center gap-4">
+        <div className="mt-5 flex items-center gap-5">
           <div className="flex-1">
-            <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+            <div className="h-3 rounded-full bg-zinc-100 overflow-hidden">
               <div
                 className="h-full rounded-full bg-violet-500 transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
-          <span className="text-sm font-medium text-zinc-600">
+          <span className="text-base font-semibold text-zinc-600">
             {doneTasks}/{totalTasks}
           </span>
         </div>
-        <p className="mt-2 text-xs text-zinc-400">
+        <p className="mt-3 text-sm text-zinc-400">
           Created {new Date(plan.createdAt).toLocaleDateString("en-US", {
             weekday: "short",
             month: "short",
@@ -91,7 +91,7 @@ export function StructuredPlanSaved({ plan }: StructuredPlanSavedProps) {
           })}
         </p>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {plan.categories.map((category) => (
           <CategoryGroup
             key={category.name}

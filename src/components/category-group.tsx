@@ -8,15 +8,6 @@ interface CategoryGroupProps {
   planId?: string;
 }
 
-const categoryIcons: Record<string, string> = {
-  work: "briefcase",
-  personal: "user",
-  health: "heart",
-  finance: "dollar",
-  learning: "book",
-  errands: "shopping",
-};
-
 function getCategoryEmoji(name: string): string {
   const lower = name.toLowerCase();
   if (lower.includes("work") || lower.includes("career")) return "💼";
@@ -34,24 +25,24 @@ export function CategoryGroup({ name, tasks, interactive = false, planId }: Cate
   const doneCount = tasks.filter((t) => "status" in t && t.status === "done").length;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <span className="text-lg">{getCategoryEmoji(name)}</span>
-          <h3 className="text-sm font-semibold text-zinc-700">
+        <div className="flex items-center gap-3">
+          <span className="text-xl">{getCategoryEmoji(name)}</span>
+          <h3 className="text-base font-semibold text-zinc-700">
             {name}
           </h3>
-          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-500">
+          <span className="rounded-full bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-500">
             {tasks.length}
           </span>
         </div>
         {interactive && doneCount > 0 && (
-          <span className="text-xs text-emerald-600 font-medium">
+          <span className="text-sm text-emerald-600 font-medium">
             {doneCount}/{tasks.length} done
           </span>
         )}
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {tasks.map((task, i) => {
           const isSaved = "id" in task;
           return (

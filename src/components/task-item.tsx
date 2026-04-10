@@ -75,41 +75,40 @@ export function TaskItem({
   return (
     <div
       className={clsx(
-        "rounded-xl border p-4 transition-all",
+        "rounded-2xl border p-5 transition-all",
         currentStatus === "done"
           ? "border-emerald-200 bg-emerald-50/30"
           : "border-zinc-200 bg-white hover:shadow-sm"
       )}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-4">
         {interactive && (
           <button
             onClick={toggleStatus}
             className={clsx(
-              "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
+              "mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border-2 transition-all",
               currentStatus === "done"
                 ? "border-emerald-500 bg-emerald-500"
                 : currentStatus === "in_progress"
                 ? "border-violet-500 bg-violet-50"
                 : "border-zinc-300 hover:border-zinc-400"
             )}
-            title={`Status: ${currentStatus.replace("_", " ")}`}
           >
             {currentStatus === "done" && (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             )}
             {currentStatus === "in_progress" && (
-              <div className="h-2 w-2 rounded-full bg-violet-500" />
+              <div className="h-2.5 w-2.5 rounded-full bg-violet-500" />
             )}
           </button>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
             <span
               className={clsx(
-                "font-medium text-[15px]",
+                "font-semibold text-base",
                 currentStatus === "done" && "line-through text-zinc-400"
               )}
             >
@@ -117,24 +116,24 @@ export function TaskItem({
             </span>
             <span
               className={clsx(
-                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
                 pc.bg, pc.text
               )}
             >
-              <span className={clsx("h-1.5 w-1.5 rounded-full", pc.dot)} />
+              <span className={clsx("h-2 w-2 rounded-full", pc.dot)} />
               {pc.label}
             </span>
           </div>
           {description && (
-            <p className="mt-1.5 text-sm text-zinc-500 leading-relaxed">{description}</p>
+            <p className="mt-2 text-base text-zinc-500 leading-relaxed">{description}</p>
           )}
           {steps.length > 0 && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="mt-2.5 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
+              className="mt-3 flex items-center gap-2 text-sm font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
             >
               <svg
-                width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
                 className={clsx("transition-transform", expanded && "rotate-90")}
               >
                 <polyline points="9 18 15 12 9 6" />
@@ -143,7 +142,7 @@ export function TaskItem({
             </button>
           )}
           {expanded && (
-            <ul className="mt-2 space-y-2 pl-0.5">
+            <ul className="mt-3 space-y-2.5 pl-1">
               {steps.map((step, i) => {
                 const isString = typeof step === "string";
                 const content = isString ? step : step.content;
@@ -151,16 +150,16 @@ export function TaskItem({
                 const checked = isString ? false : stepStates[step.id] ?? false;
 
                 return (
-                  <li key={stepId} className="flex items-start gap-2.5 text-sm">
+                  <li key={stepId} className="flex items-start gap-3 text-base">
                     {interactive && !isString ? (
                       <input
                         type="checkbox"
                         checked={checked}
                         onChange={() => toggleStep(step.id)}
-                        className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500"
+                        className="mt-1 h-5 w-5 rounded border-zinc-300 text-violet-600 focus:ring-violet-500"
                       />
                     ) : (
-                      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
+                      <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-zinc-300" />
                     )}
                     <span
                       className={clsx(
