@@ -3,11 +3,17 @@
 :root {
   --background: #fafafa;
   --foreground: #171717;
+  --accent: #7c3aed;
+  --accent-light: #ede9fe;
+  --accent-hover: #6d28d9;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-hover: var(--accent-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -21,3 +27,19 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/* Accent color overrides — these apply the theme color everywhere */
+.bg-violet-600 { background-color: var(--accent) !important; }
+.bg-violet-700 { background-color: var(--accent-hover) !important; }
+.bg-violet-50 { background-color: var(--accent-light) !important; }
+.text-violet-700 { color: var(--accent) !important; }
+.text-violet-600 { color: var(--accent) !important; }
+.text-violet-500 { color: var(--accent) !important; }
+.border-violet-200 { border-color: color-mix(in srgb, var(--accent) 25%, white) !important; }
+.border-violet-400 { border-color: color-mix(in srgb, var(--accent) 50%, white) !important; }
+.ring-violet-200 { --tw-ring-color: color-mix(in srgb, var(--accent) 25%, white) !important; }
+.ring-violet-500 { --tw-ring-color: var(--accent) !important; }
+.border-t-violet-600 { border-top-color: var(--accent) !important; }
+.from-violet-500 { --tw-gradient-from: var(--accent) !important; }
+.to-violet-600 { --tw-gradient-to: var(--accent-hover) !important; }
+.from-violet-50 { --tw-gradient-from: var(--accent-light) !important; }

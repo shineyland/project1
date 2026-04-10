@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { applyAccentColor } from "@/components/theme-provider";
 
 const accentColors = [
   { name: "Violet", value: "#7c3aed" },
@@ -25,16 +26,15 @@ export default function ThemePage() {
   const [bgImage, setBgImage] = useState<string | null>(null);
   const [profileName, setProfileName] = useState("User");
   const [saved, setSaved] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Load saved theme
     const savedAccent = localStorage.getItem("braindump-accent");
     const savedBg = localStorage.getItem("braindump-bg");
     if (savedAccent) setAccent(savedAccent);
     if (savedBg) setBgImage(savedBg);
 
-    // Load profile
     fetch("/api/profile")
       .then((r) => r.json())
       .then((data) => {
@@ -47,8 +47,14 @@ export default function ThemePage() {
 
   function handleAccentChange(color: string) {
     setAccent(color);
-    localStorage.setItem("braindump-accent", color);
-    document.documentElement.style.setProperty("--accent-color", color);
+    setHasChanges(true);
+    // Preview immediately
+    applyAccentColor(color);
+  }
+
+  function handleAvatarColorChange(color: string) {
+    setAvatarColor(color);
+    setHasChanges(true);
   }
 
   function handleBgUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -62,27 +68,50 @@ export default function ThemePage() {
     reader.onload = () => {
       const dataUrl = reader.result as string;
       setBgImage(dataUrl);
-      localStorage.setItem("braindump-bg", dataUrl);
+      setHasChanges(true);
     };
     reader.readAsDataURL(file);
   }
 
   function removeBg() {
     setBgImage(null);
-    localStorage.removeItem("braindump-bg");
-  }
-
-  async function saveAvatarColor(color: string) {
-    setAvatarColor(color);
-    await fetch("/api/profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ avatarColor: color }),
-    });
+    setHasChanges(true);
   }
 
   async function saveAll() {
+    // Save accent color
+    localStorage.setItem("braindump-accent", accent);
+    applyAccentColor(accent);
+
+    // Save background
+    if (bgImage) {
+      localStorage.setItem("braindump-bg", bgImage);
+      document.body.style.backgroundImage = `url(${bgImage})`;
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundPosition = "center";
+      document.body.style.backgroundAttachment = "fixed";
+    } else {
+      localStorage.removeItem("braindump-bg");
+      document.body.style.backgroundImage = "";
+    }
+
+    // Save avatar color to server + localStorage
+    await fetch("/api/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ avatarColor }),
+    });
+    const cached = localStorage.getItem("braindump-profile");
+    if (cached) {
+      try {
+        const profile = JSON.parse(cached);
+        profile.avatarColor = avatarColor;
+        localStorage.setItem("braindump-profile", JSON.stringify(profile));
+      } catch {}
+    }
+
     setSaved(true);
+    setHasChanges(false);
     setTimeout(() => setSaved(false), 2000);
   }
 
@@ -99,7 +128,7 @@ export default function ThemePage() {
         {/* App accent color */}
         <div className="rounded-2xl border border-zinc-200 bg-white p-8">
           <h2 className="text-lg font-semibold text-zinc-700 mb-2">App Color</h2>
-          <p className="text-base text-zinc-400 mb-5">Choose your accent color</p>
+          <p className="text-base text-zinc-400 mb-5">Changes buttons, links, and highlights across the app</p>
           <div className="flex flex-wrap gap-4">
             {accentColors.map((c) => (
               <button
@@ -118,12 +147,21 @@ export default function ThemePage() {
               </button>
             ))}
           </div>
+          {/* Preview */}
+          <div className="mt-6 flex items-center gap-3">
+            <span className="text-sm text-zinc-400">Preview:</span>
+            <button className="rounded-xl px-5 py-2.5 text-sm font-semibold text-white" style={{ backgroundColor: accent }}>
+              Button
+            </button>
+            <span className="text-sm font-medium" style={{ color: accent }}>Link Text</span>
+            <span className="rounded-lg px-3 py-1 text-xs font-medium" style={{ backgroundColor: accent + "1a", color: accent }}>Badge</span>
+          </div>
         </div>
 
         {/* Avatar color */}
         <div className="rounded-2xl border border-zinc-200 bg-white p-8">
-          <h2 className="text-lg font-semibold text-zinc-700 mb-2">Avatar</h2>
-          <p className="text-base text-zinc-400 mb-5">Change your avatar color</p>
+          <h2 className="text-lg font-semibold text-zinc-700 mb-2">Avatar Color</h2>
+          <p className="text-base text-zinc-400 mb-5">Change your avatar color shown in the header</p>
           <div className="flex items-center gap-8">
             <div
               className="flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-md transition-colors"
@@ -135,7 +173,7 @@ export default function ThemePage() {
               {avatarColors.map((color) => (
                 <button
                   key={color}
-                  onClick={() => saveAvatarColor(color)}
+                  onClick={() => handleAvatarColorChange(color)}
                   className="h-10 w-10 rounded-full transition-all hover:scale-110"
                   style={{
                     backgroundColor: color,
@@ -193,11 +231,14 @@ export default function ThemePage() {
           />
         </div>
 
+        {/* Save button */}
         <button
           onClick={saveAll}
-          className="w-full rounded-xl bg-violet-600 px-6 py-4 text-base font-semibold text-white shadow-sm transition-all hover:bg-violet-700 hover:shadow active:scale-[0.98]"
+          disabled={saved}
+          className="w-full rounded-xl px-6 py-4 text-lg font-semibold text-white shadow-sm transition-all hover:shadow active:scale-[0.98] disabled:opacity-80"
+          style={{ backgroundColor: saved ? "#059669" : accent }}
         >
-          {saved ? "Saved!" : "Save Preferences"}
+          {saved ? "Saved Successfully!" : hasChanges ? "Save Changes" : "Save Preferences"}
         </button>
       </div>
     </div>
