@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f0f0f5;
-  --foreground: #171717;
+  --background: #f8f9fc;
+  --foreground: #1e1e2e;
   --accent: #7c3aed;
-  --accent-light: #ede9fe;
+  --accent-light: #f3f0ff;
   --accent-hover: #6d28d9;
 }
 
@@ -23,131 +23,137 @@ html {
 }
 
 body {
-  background: linear-gradient(135deg, #e0e7ff 0%, #f0f0f5 30%, #fdf2f8 60%, #ecfdf5 100%);
+  background: linear-gradient(135deg, #eef2ff 0%, #f8f9fc 25%, #fef7ff 50%, #f0fdf4 75%, #f8f9fc 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* === 3D Glass UI System === */
+/* === Light & Bright Glass UI === */
 
 /* Glass card */
 .rounded-2xl {
-  background: rgba(255, 255, 255, 0.65) !important;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-color: rgba(255, 255, 255, 0.6) !important;
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.04),
-    0 1px 2px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 2px 16px rgba(0, 0, 0, 0.025),
+    0 1px 2px rgba(0, 0, 0, 0.015),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-/* Glass card hover lift */
 .rounded-2xl:hover {
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.08),
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 /* Smaller glass cards */
 .rounded-xl {
-  background: rgba(255, 255, 255, 0.55) !important;
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  border-color: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  border-color: rgba(255, 255, 255, 0.5) !important;
   box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    0 1px 8px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 /* Glass header */
 header {
-  background: rgba(255, 255, 255, 0.6) !important;
-  backdrop-filter: blur(24px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.72) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.02);
 }
 
-/* Glass buttons */
+/* Transitions */
 button, a {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Primary glass buttons (violet) */
+/* Primary buttons */
 .bg-violet-600 {
   background: linear-gradient(135deg, var(--accent), var(--accent-hover)) !important;
   box-shadow:
-    0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 3px 12px color-mix(in srgb, var(--accent) 25%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 .bg-violet-600:hover, .bg-violet-700 {
   background: linear-gradient(135deg, var(--accent-hover), var(--accent)) !important;
   box-shadow:
-    0 6px 20px color-mix(in srgb, var(--accent) 45%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
+    0 5px 18px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-0.5px);
 }
 
-/* Glass input fields */
+/* Inputs */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="date"],
 textarea,
 select {
-  background: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(8px);
-  border-color: rgba(255, 255, 255, 0.4) !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(6px);
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 input:focus, textarea:focus, select:focus {
-  background: rgba(255, 255, 255, 0.85) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: color-mix(in srgb, var(--accent) 40%, white) !important;
   box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.04),
-    0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+    inset 0 1px 2px rgba(0, 0, 0, 0.02),
+    0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
 /* Progress bars */
 .bg-zinc-100 {
-  background: rgba(0, 0, 0, 0.06) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
 }
 
 /* Accent color overrides */
-.bg-violet-50 { background-color: color-mix(in srgb, var(--accent) 8%, white) !important; }
+.bg-violet-50 { background-color: color-mix(in srgb, var(--accent) 6%, white) !important; }
 .text-violet-700 { color: var(--accent) !important; }
 .text-violet-600 { color: var(--accent) !important; }
 .text-violet-500 { color: var(--accent) !important; }
-.border-violet-200 { border-color: color-mix(in srgb, var(--accent) 20%, white) !important; }
-.border-violet-300 { border-color: color-mix(in srgb, var(--accent) 30%, white) !important; }
-.border-violet-400 { border-color: color-mix(in srgb, var(--accent) 40%, white) !important; }
-.ring-violet-200 { --tw-ring-color: color-mix(in srgb, var(--accent) 20%, white) !important; }
-.ring-violet-400 { --tw-ring-color: color-mix(in srgb, var(--accent) 40%, white) !important; }
+.border-violet-200 { border-color: color-mix(in srgb, var(--accent) 15%, white) !important; }
+.border-violet-300 { border-color: color-mix(in srgb, var(--accent) 25%, white) !important; }
+.border-violet-400 { border-color: color-mix(in srgb, var(--accent) 35%, white) !important; }
+.ring-violet-200 { --tw-ring-color: color-mix(in srgb, var(--accent) 15%, white) !important; }
+.ring-violet-400 { --tw-ring-color: color-mix(in srgb, var(--accent) 35%, white) !important; }
 .ring-violet-500 { --tw-ring-color: var(--accent) !important; }
 .border-t-violet-600 { border-top-color: var(--accent) !important; }
 .from-violet-500 { --tw-gradient-from: var(--accent) !important; }
-.from-violet-50 { --tw-gradient-from: color-mix(in srgb, var(--accent) 8%, white) !important; }
+.from-violet-50 { --tw-gradient-from: color-mix(in srgb, var(--accent) 6%, white) !important; }
 .to-violet-600 { --tw-gradient-to: var(--accent-hover) !important; }
-.text-violet-600\.focus\:ring-violet-500 { color: var(--accent) !important; }
 
-/* Checkbox accent */
+/* Checkbox */
 input[type="checkbox"] {
   accent-color: var(--accent);
 }
 
-/* Dashed borders keep their look */
+/* Dashed borders */
 .border-dashed {
-  border-color: rgba(0, 0, 0, 0.12) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
-/* Emerald completed states keep solid */
-.bg-emerald-500 { background-color: #059669 !important; backdrop-filter: none; }
-.bg-emerald-50\/30, .bg-emerald-50\/50 { backdrop-filter: blur(8px); }
+/* Completed states */
+.bg-emerald-500 { background-color: #34d399 !important; backdrop-filter: none; }
+.bg-emerald-50\/30, .bg-emerald-50\/50 { backdrop-filter: blur(6px); }
 
-/* Gradient hero cards */
-.from-emerald-500 { --tw-gradient-from: #059669 !important; }
-.to-emerald-600 { --tw-gradient-to: #047857 !important; }
+/* Gradient hero cards — lighter */
+.from-emerald-500 { --tw-gradient-from: #34d399 !important; }
+.to-emerald-600 { --tw-gradient-to: #10b981 !important; }
 .from-violet-500 { --tw-gradient-from: var(--accent) !important; }
+
+/* Zinc overrides for lighter feel */
+.bg-zinc-50 { background: rgba(255, 255, 255, 0.5) !important; }
+.border-zinc-200 { border-color: rgba(0, 0, 0, 0.05) !important; }
+.border-zinc-100 { border-color: rgba(0, 0, 0, 0.03) !important; }
+.border-emerald-100 { border-color: rgba(16, 185, 129, 0.15) !important; }
+.border-emerald-200 { border-color: rgba(16, 185, 129, 0.2) !important; }
