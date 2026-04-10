@@ -12,6 +12,7 @@ const navItems = [
   { href: "/plans", label: "Plans" },
   { href: "/streak", label: "Streak" },
   { href: "/insights", label: "Insights" },
+  { href: "/theme", label: "Theme" },
 ];
 
 interface Profile {
@@ -24,12 +25,10 @@ export function Header() {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    // Try localStorage first for instant render
     const cached = localStorage.getItem("braindump-profile");
     if (cached) {
       try { setProfile(JSON.parse(cached)); } catch {}
     }
-    // Then sync from server
     fetch("/api/profile")
       .then((r) => r.json())
       .then((data: Profile | null) => {
@@ -46,7 +45,6 @@ export function Header() {
     return pathname.startsWith(href);
   }
 
-  // Hide header on login page
   if (pathname === "/login") return null;
 
   const initials = profile?.name
@@ -82,27 +80,17 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <Link href="/theme" className={clsx(
-            "rounded-xl p-2 transition-colors",
-            pathname === "/theme" ? "bg-violet-50 text-violet-700" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600"
-          )}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
-            </svg>
+        {profile && initials && (
+          <Link href="/login" className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 hover:bg-zinc-50 transition-colors" title="Edit profile">
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white"
+              style={{ backgroundColor: profile.avatarColor || "#7c3aed" }}
+            >
+              {initials}
+            </div>
+            <span className="text-sm font-medium text-zinc-700 hidden sm:block">{profile.name.split(" ")[0]}</span>
           </Link>
-          {profile && initials && (
-            <Link href="/login" className="flex items-center gap-2.5 rounded-xl px-2 py-1.5 hover:bg-zinc-50 transition-colors" title="Edit profile">
-              <div
-                className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white"
-                style={{ backgroundColor: profile.avatarColor || "#7c3aed" }}
-              >
-                {initials}
-              </div>
-              <span className="text-sm font-medium text-zinc-700 hidden sm:block">{profile.name.split(" ")[0]}</span>
-            </Link>
-          )}
-        </div>
+        )}
       </div>
     </header>
   );
