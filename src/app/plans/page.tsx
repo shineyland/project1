@@ -1,15 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { PlanCard } from "@/components/plan-card";
+
+interface UpcomingTask {
+  id: string;
+  title: string;
+  priority: string;
+  status: string;
+  category: string | null;
+}
 
 interface PlanSummary {
   id: string;
   title: string;
   summary: string | null;
   createdAt: string;
+  updatedAt: string;
   taskCount: number;
+  doneTasks: number;
+  inProgressTasks: number;
+  highPriority: number;
+  categories: string[];
+  upcoming: UpcomingTask[];
 }
 
 export default function PlansPage() {
@@ -17,7 +31,7 @@ export default function PlansPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const fetchPlans = useCallback(() => {
     fetch("/api/plans")
       .then((r) => {
         if (!r.ok) throw new Error("Failed to load");
@@ -33,15 +47,31 @@ export default function PlansPage() {
       });
   }, []);
 
+  useEffect(() => {
+    fetchPlans();
+  }, [fetchPlans]);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this plan? This cannot be undone.")) return;
+    await fetch(`/api/plans/${id}`, { method: "DELETE" });
+    setPlans((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  // Aggregate stats
+  const totalTasks = plans.reduce((a, p) => a + p.taskCount, 0);
+  const totalDone = plans.reduce((a, p) => a + p.doneTasks, 0);
+  const totalInProgress = plans.reduce((a, p) => a + p.inProgressTasks, 0);
+  const totalUrgent = plans.reduce((a, p) => a + p.highPriority, 0);
+  const overallProgress = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
+
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      {/* Header */}
+      <div className="mb-8 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-zinc-900">My Plans</h1>
           <p className="mt-1 text-sm text-zinc-500">
-            {plans.length > 0
-              ? `${plans.length} plan${plans.length !== 1 ? "s" : ""} saved`
-              : "Your organized plans will appear here"}
+            Track your organized plans and stay on top of tasks
           </p>
         </div>
         <Link
@@ -75,7 +105,7 @@ export default function PlansPage() {
             </svg>
           </div>
           <p className="text-zinc-500 font-medium">No plans yet</p>
-          <p className="mt-1 text-sm text-zinc-400">Start by dumping your thoughts and saving a plan</p>
+          <p className="mt-1 text-sm text-zinc-400">Brain dump your thoughts and AI will organize them into plans</p>
           <Link
             href="/"
             className="mt-5 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-violet-700"
@@ -86,18 +116,68 @@ export default function PlansPage() {
       )}
 
       {!loading && !error && plans.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {plans.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              id={plan.id}
-              title={plan.title}
-              summary={plan.summary}
-              createdAt={plan.createdAt}
-              taskCount={plan.taskCount}
-            />
-          ))}
-        </div>
+        <>
+          {/* Stats overview */}
+          <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Total Tasks</p>
+              <p className="mt-1 text-2xl font-bold text-zinc-900">{totalTasks}</p>
+              <div className="mt-2 h-1.5 rounded-full bg-zinc-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-violet-500 transition-all"
+                  style={{ width: `${overallProgress}%` }}
+                />
+              </div>
+              <p className="mt-1 text-[11px] text-zinc-400">{overallProgress}% complete</p>
+            </div>
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-emerald-600">Completed</p>
+              <p className="mt-1 text-2xl font-bold text-emerald-700">{totalDone}</p>
+              <p className="mt-3 text-[11px] text-emerald-500">
+                {totalTasks > 0 ? `${totalTasks - totalDone} remaining` : "No tasks yet"}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-blue-600">In Progress</p>
+              <p className="mt-1 text-2xl font-bold text-blue-700">{totalInProgress}</p>
+              <p className="mt-3 text-[11px] text-blue-500">
+                Active right now
+              </p>
+            </div>
+            <div className="rounded-2xl border border-red-200 bg-red-50/50 p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-red-600">Urgent</p>
+              <p className="mt-1 text-2xl font-bold text-red-700">{totalUrgent}</p>
+              <p className="mt-3 text-[11px] text-red-500">
+                {totalUrgent > 0 ? "Need attention" : "All clear"}
+              </p>
+            </div>
+          </div>
+
+          {/* Plan cards */}
+          <div className="space-y-3">
+            <h2 className="text-sm font-semibold text-zinc-500 uppercase tracking-wider">
+              {plans.length} Plan{plans.length !== 1 ? "s" : ""}
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {plans.map((plan) => (
+                <PlanCard
+                  key={plan.id}
+                  id={plan.id}
+                  title={plan.title}
+                  summary={plan.summary}
+                  createdAt={plan.createdAt}
+                  taskCount={plan.taskCount}
+                  doneTasks={plan.doneTasks}
+                  inProgressTasks={plan.inProgressTasks}
+                  highPriority={plan.highPriority}
+                  categories={plan.categories}
+                  upcoming={plan.upcoming}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

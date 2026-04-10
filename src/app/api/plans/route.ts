@@ -1,26 +1,54 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { plans, tasks, steps } from "@/lib/db/schema";
-import { desc, eq, count } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import type { StructuredPlan } from "@/lib/types";
 
 export async function GET() {
-  const allPlans = await db
-    .select({
-      id: plans.id,
-      title: plans.title,
-      summary: plans.summary,
-      createdAt: plans.createdAt,
-      updatedAt: plans.updatedAt,
-      taskCount: count(tasks.id),
-    })
-    .from(plans)
-    .leftJoin(tasks, eq(plans.id, tasks.planId))
-    .groupBy(plans.id)
-    .orderBy(desc(plans.createdAt));
+  const allPlans = await db.select().from(plans).orderBy(desc(plans.createdAt));
 
-  return NextResponse.json(allPlans);
+  const result = [];
+  for (const plan of allPlans) {
+    const planTasks = await db.select().from(tasks).where(eq(tasks.planId, plan.id));
+    const totalTasks = planTasks.length;
+    const doneTasks = planTasks.filter((t) => t.status === "done").length;
+    const inProgressTasks = planTasks.filter((t) => t.status === "in_progress").length;
+    const highPriority = planTasks.filter((t) => t.priority === "high" && t.status !== "done").length;
+
+    // Get unique categories
+    const categories = [...new Set(planTasks.map((t) => t.category).filter(Boolean))];
+
+    // Get upcoming tasks (not done, ordered by priority)
+    const priorityOrder = { high: 0, medium: 1, low: 2 };
+    const upcoming = planTasks
+      .filter((t) => t.status !== "done")
+      .sort((a, b) => (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2))
+      .slice(0, 3)
+      .map((t) => ({
+        id: t.id,
+        title: t.title,
+        priority: t.priority,
+        status: t.status,
+        category: t.category,
+      }));
+
+    result.push({
+      id: plan.id,
+      title: plan.title,
+      summary: plan.summary,
+      createdAt: plan.createdAt,
+      updatedAt: plan.updatedAt,
+      taskCount: totalTasks,
+      doneTasks,
+      inProgressTasks,
+      highPriority,
+      categories,
+      upcoming,
+    });
+  }
+
+  return NextResponse.json(result);
 }
 
 export async function POST(request: Request) {
