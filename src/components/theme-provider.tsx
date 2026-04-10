@@ -36,10 +36,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Apply saved background image
     const bg = localStorage.getItem("braindump-bg");
     if (bg) {
-      document.body.style.backgroundImage = `url(${bg})`;
-      document.body.style.backgroundSize = "cover";
-      document.body.style.backgroundPosition = "center";
-      document.body.style.backgroundAttachment = "fixed";
+      document.body.style.setProperty("background-image", `url(${bg})`, "important");
+      document.body.style.setProperty("background-size", "cover", "important");
+      document.body.style.setProperty("background-position", "center", "important");
+      document.body.style.setProperty("background-attachment", "fixed", "important");
+      document.body.style.setProperty("background-color", "transparent", "important");
     }
 
     // Apply saved accent color
