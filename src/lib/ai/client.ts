@@ -4,9 +4,9 @@ import type { StructuredPlan } from "../types";
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 export async function processBrainDump(rawInput: string): Promise<StructuredPlan> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.OPENROUTER_KEY;
   if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is not set");
+    throw new Error("OPENROUTER_KEY is not set");
   }
 
   const response = await fetch(OPENROUTER_API_URL, {
