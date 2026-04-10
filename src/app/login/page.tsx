@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { clsx } from "clsx";
 
 const avatarColors = ["#7c3aed", "#2563eb", "#059669", "#d97706", "#dc2626", "#db2777", "#9333ea", "#0891b2", "#65a30d", "#ea580c"];
 
@@ -44,7 +45,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="rounded-2xl border border-zinc-200 p-6 space-y-5">
           <div className="flex justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white" style={{ backgroundColor: selectedColor }}>{initials}</div>
+            <div data-solid className="flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg" style={{ "--solid-bg": selectedColor } as React.CSSProperties}>{initials}</div>
           </div>
           <div>
             <label className="block text-sm font-medium text-zinc-700 mb-1.5">Your Name</label>
@@ -54,7 +55,7 @@ export default function LoginPage() {
             <label className="block text-sm font-medium text-zinc-700 mb-2">Avatar Color</label>
             <div className="flex flex-wrap gap-2.5">
               {avatarColors.map((c) => (
-                <button key={c} type="button" onClick={() => setSelectedColor(c)} className="h-9 w-9 rounded-full" style={{ backgroundColor: c, boxShadow: selectedColor === c ? `0 0 0 2px white, 0 0 0 4px ${c}` : "none" }} />
+                <button key={c} type="button" onClick={() => setSelectedColor(c)} data-solid className={clsx("h-9 w-9 rounded-full shadow-sm transition-all", selectedColor === c && "ring-2 ring-offset-2")} style={{ "--solid-bg": c, ringColor: c } as React.CSSProperties} />
               ))}
             </div>
           </div>
@@ -64,7 +65,7 @@ export default function LoginPage() {
               <span className="text-sm text-zinc-600">Remember me</span>
             </label>
           )}
-          <button type="submit" disabled={!name.trim() || saving} className="w-full rounded-xl bg-violet-600 py-3 text-base font-semibold text-white hover:bg-violet-700 disabled:opacity-50">
+          <button type="submit" disabled={!name.trim() || saving} data-solid className="w-full rounded-xl py-3 text-base font-semibold text-white shadow-lg hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50" style={{ "--solid-bg": "#7c3aed" } as React.CSSProperties}>
             {saving ? "Saving..." : isExisting ? "Save Changes" : "Create Account"}
           </button>
         </form>
