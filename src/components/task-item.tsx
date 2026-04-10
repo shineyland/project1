@@ -15,10 +15,10 @@ interface TaskItemProps {
   planId?: string;
 }
 
-const priorityColors = {
-  high: "bg-red-100 text-red-700",
-  medium: "bg-yellow-100 text-yellow-700",
-  low: "bg-green-100 text-green-700",
+const priorityConfig = {
+  high: { bg: "bg-red-50", text: "text-red-600", dot: "bg-red-500", label: "High" },
+  medium: { bg: "bg-amber-50", text: "text-amber-600", dot: "bg-amber-500", label: "Medium" },
+  low: { bg: "bg-emerald-50", text: "text-emerald-600", dot: "bg-emerald-500", label: "Low" },
 };
 
 export function TaskItem({
@@ -42,6 +42,8 @@ export function TaskItem({
     });
     return map;
   });
+
+  const pc = priorityConfig[priority];
 
   async function toggleStatus() {
     if (!interactive || !id || !planId) return;
@@ -70,19 +72,13 @@ export function TaskItem({
     });
   }
 
-  const statusIcons = {
-    todo: "border-zinc-300",
-    in_progress: "border-blue-500 bg-blue-50",
-    done: "border-green-500 bg-green-500",
-  };
-
   return (
     <div
       className={clsx(
-        "rounded-lg border p-3",
+        "rounded-xl border p-4 transition-all",
         currentStatus === "done"
-          ? "border-green-200 bg-green-50/50"
-          : "border-zinc-200 bg-white"
+          ? "border-emerald-200 bg-emerald-50/30"
+          : "border-zinc-200 bg-white hover:shadow-sm"
       )}
     >
       <div className="flex items-start gap-3">
@@ -90,23 +86,30 @@ export function TaskItem({
           <button
             onClick={toggleStatus}
             className={clsx(
-              "mt-0.5 h-5 w-5 shrink-0 rounded-full border-2 transition-colors",
-              statusIcons[currentStatus]
+              "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
+              currentStatus === "done"
+                ? "border-emerald-500 bg-emerald-500"
+                : currentStatus === "in_progress"
+                ? "border-violet-500 bg-violet-50"
+                : "border-zinc-300 hover:border-zinc-400"
             )}
-            title={`Status: ${currentStatus}`}
+            title={`Status: ${currentStatus.replace("_", " ")}`}
           >
             {currentStatus === "done" && (
-              <svg className="h-full w-full text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
               </svg>
+            )}
+            {currentStatus === "in_progress" && (
+              <div className="h-2 w-2 rounded-full bg-violet-500" />
             )}
           </button>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span
               className={clsx(
-                "font-medium",
+                "font-medium text-[15px]",
                 currentStatus === "done" && "line-through text-zinc-400"
               )}
             >
@@ -114,26 +117,33 @@ export function TaskItem({
             </span>
             <span
               className={clsx(
-                "shrink-0 rounded-full px-2 py-0.5 text-xs font-medium",
-                priorityColors[priority]
+                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                pc.bg, pc.text
               )}
             >
-              {priority}
+              <span className={clsx("h-1.5 w-1.5 rounded-full", pc.dot)} />
+              {pc.label}
             </span>
           </div>
           {description && (
-            <p className="mt-1 text-sm text-zinc-500">{description}</p>
+            <p className="mt-1.5 text-sm text-zinc-500 leading-relaxed">{description}</p>
           )}
           {steps.length > 0 && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="mt-2 text-xs font-medium text-zinc-500 hover:text-zinc-700"
+              className="mt-2.5 flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-              {expanded ? "Hide" : "Show"} {steps.length} step{steps.length !== 1 ? "s" : ""}
+              <svg
+                width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                className={clsx("transition-transform", expanded && "rotate-90")}
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+              {steps.length} step{steps.length !== 1 ? "s" : ""}
             </button>
           )}
           {expanded && (
-            <ul className="mt-2 space-y-1.5">
+            <ul className="mt-2 space-y-2 pl-0.5">
               {steps.map((step, i) => {
                 const isString = typeof step === "string";
                 const content = isString ? step : step.content;
@@ -141,19 +151,20 @@ export function TaskItem({
                 const checked = isString ? false : stepStates[step.id] ?? false;
 
                 return (
-                  <li key={stepId} className="flex items-start gap-2 text-sm">
+                  <li key={stepId} className="flex items-start gap-2.5 text-sm">
                     {interactive && !isString ? (
                       <input
                         type="checkbox"
                         checked={checked}
                         onChange={() => toggleStep(step.id)}
-                        className="mt-0.5 h-4 w-4 rounded border-zinc-300"
+                        className="mt-0.5 h-4 w-4 rounded border-zinc-300 text-violet-600 focus:ring-violet-500"
                       />
                     ) : (
-                      <span className="mt-0.5 text-zinc-400">-</span>
+                      <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-300" />
                     )}
                     <span
                       className={clsx(
+                        "leading-relaxed",
                         checked && "line-through text-zinc-400"
                       )}
                     >

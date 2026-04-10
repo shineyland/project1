@@ -8,16 +8,48 @@ interface CategoryGroupProps {
   planId?: string;
 }
 
+const categoryIcons: Record<string, string> = {
+  work: "briefcase",
+  personal: "user",
+  health: "heart",
+  finance: "dollar",
+  learning: "book",
+  errands: "shopping",
+};
+
+function getCategoryEmoji(name: string): string {
+  const lower = name.toLowerCase();
+  if (lower.includes("work") || lower.includes("career")) return "💼";
+  if (lower.includes("health") || lower.includes("fitness")) return "💪";
+  if (lower.includes("personal")) return "🏠";
+  if (lower.includes("finance") || lower.includes("money")) return "💰";
+  if (lower.includes("learn") || lower.includes("education")) return "📚";
+  if (lower.includes("errand") || lower.includes("shop")) return "🛒";
+  if (lower.includes("social") || lower.includes("relation")) return "👥";
+  if (lower.includes("creative") || lower.includes("hobby")) return "🎨";
+  return "📋";
+}
+
 export function CategoryGroup({ name, tasks, interactive = false, planId }: CategoryGroupProps) {
+  const doneCount = tasks.filter((t) => "status" in t && t.status === "done").length;
+
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
-          {name}
-        </h3>
-        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500">
-          {tasks.length}
-        </span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <span className="text-lg">{getCategoryEmoji(name)}</span>
+          <h3 className="text-sm font-semibold text-zinc-700">
+            {name}
+          </h3>
+          <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-500">
+            {tasks.length}
+          </span>
+        </div>
+        {interactive && doneCount > 0 && (
+          <span className="text-xs text-emerald-600 font-medium">
+            {doneCount}/{tasks.length} done
+          </span>
+        )}
       </div>
       <div className="space-y-2">
         {tasks.map((task, i) => {
