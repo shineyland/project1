@@ -72,11 +72,6 @@ export default function ThemePage() {
               </button>
             ))}
           </div>
-          <div className="mt-4 flex items-center gap-2">
-            <span className="text-xs text-zinc-400">Preview:</span>
-            <button className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white" style={{ backgroundColor: accent }}>Button</button>
-            <span className="text-xs font-medium" style={{ color: accent }}>Link</span>
-          </div>
         </div>
 
         {/* Avatar */}
@@ -110,7 +105,7 @@ export default function ThemePage() {
         </div>
       </div>
 
-      <button onClick={saveAll} className="w-full mt-5 rounded-xl px-6 py-3.5 text-base font-semibold text-white" style={{ backgroundColor: saved ? "#059669" : accent }}>
+      <button onClick={saveAll} className="w-full mt-5 rounded-2xl px-6 py-3.5 text-base font-semibold text-white shadow-lg hover:shadow-xl transition-all active:scale-[0.98]" style={{ background: saved ? "#059669" : `linear-gradient(135deg, ${accent}, ${accent})`, backdropFilter: "none", WebkitBackdropFilter: "none" }}>
         {saved ? "Saved!" : "Save Changes"}
       </button>
     </div>
