@@ -23,103 +23,112 @@ html {
 }
 
 body {
-  background: linear-gradient(145deg, #f0f0ff 0%, #ffffff 30%, #fff5fc 55%, #f0fff7 80%, #ffffff 100%);
+  background: linear-gradient(145deg, #eef0ff 0%, #f7f8fc 30%, #fdf5ff 55%, #eefcf4 80%, #f7f8fc 100%);
   background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-/* === Bright Glass UI === */
+/* === Bright Layered Glass UI === */
 
+/* Layer 1: Large cards — bright white, strong shadow for depth */
 .rounded-2xl {
-  background: rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: blur(16px) saturate(120%) brightness(108%);
-  -webkit-backdrop-filter: blur(16px) saturate(120%) brightness(108%);
-  border-color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(16px) saturate(120%) brightness(105%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%) brightness(105%);
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
   box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.018),
+    0 4px 20px rgba(0, 0, 0, 0.045),
+    0 1px 3px rgba(0, 0, 0, 0.025),
     inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 .rounded-2xl:hover {
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.03),
+    0 8px 30px rgba(0, 0, 0, 0.065),
+    0 2px 4px rgba(0, 0, 0, 0.03),
     inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
+/* Layer 2: Inner cards — slightly tinted, visible against white parent */
 .rounded-xl {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(10px) saturate(110%) brightness(106%);
-  -webkit-backdrop-filter: blur(10px) saturate(110%) brightness(106%);
-  border-color: rgba(255, 255, 255, 0.7) !important;
+  background: rgba(248, 249, 252, 0.95) !important;
+  backdrop-filter: blur(8px) brightness(103%);
+  -webkit-backdrop-filter: blur(8px) brightness(103%);
+  border: 1px solid rgba(0, 0, 0, 0.055) !important;
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.012),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 2px 8px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
+/* Layer 0: Header — floating above everything */
 header {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(20px) saturate(130%) brightness(110%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(130%) brightness(110%) !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.012);
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(24px) saturate(140%) brightness(108%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(140%) brightness(108%) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
 }
 
 button, a {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Primary buttons — vibrant, lifted */
 .bg-violet-600 {
   background: linear-gradient(135deg, var(--accent), var(--accent-hover)) !important;
   box-shadow:
-    0 3px 14px color-mix(in srgb, var(--accent) 28%, transparent),
+    0 4px 16px color-mix(in srgb, var(--accent) 30%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 .bg-violet-600:hover, .bg-violet-700 {
   background: linear-gradient(135deg, var(--accent-hover), var(--accent)) !important;
   box-shadow:
-    0 5px 20px color-mix(in srgb, var(--accent) 38%, transparent),
+    0 6px 24px color-mix(in srgb, var(--accent) 40%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  transform: translateY(-0.5px);
+  transform: translateY(-1px);
 }
 
+/* Inputs — recessed, contrast against card */
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="date"],
 textarea,
 select {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(4px) brightness(105%);
-  border-color: rgba(0, 0, 0, 0.04) !important;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01);
+  background: rgba(245, 246, 250, 0.9) !important;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(0, 0, 0, 0.07) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.025);
 }
 
 input:focus, textarea:focus, select:focus {
   background: #ffffff !important;
-  border-color: color-mix(in srgb, var(--accent) 35%, white) !important;
+  border-color: color-mix(in srgb, var(--accent) 40%, white) !important;
   box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.01),
-    0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+    inset 0 1px 2px rgba(0, 0, 0, 0.015),
+    0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
+/* Progress bars — visible track */
 .bg-zinc-100 {
-  background: rgba(0, 0, 0, 0.03) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
 }
 
-.bg-violet-50 { background-color: color-mix(in srgb, var(--accent) 5%, white) !important; }
+/* Accent overrides */
+.bg-violet-50 { background-color: color-mix(in srgb, var(--accent) 6%, white) !important; }
 .text-violet-700 { color: var(--accent) !important; }
 .text-violet-600 { color: var(--accent) !important; }
 .text-violet-500 { color: var(--accent) !important; }
-.border-violet-200 { border-color: color-mix(in srgb, var(--accent) 12%, white) !important; }
-.border-violet-300 { border-color: color-mix(in srgb, var(--accent) 20%, white) !important; }
-.border-violet-400 { border-color: color-mix(in srgb, var(--accent) 30%, white) !important; }
-.ring-violet-200 { --tw-ring-color: color-mix(in srgb, var(--accent) 12%, white) !important; }
-.ring-violet-400 { --tw-ring-color: color-mix(in srgb, var(--accent) 30%, white) !important; }
+.border-violet-200 { border-color: color-mix(in srgb, var(--accent) 15%, white) !important; }
+.border-violet-300 { border-color: color-mix(in srgb, var(--accent) 25%, white) !important; }
+.border-violet-400 { border-color: color-mix(in srgb, var(--accent) 35%, white) !important; }
+.ring-violet-200 { --tw-ring-color: color-mix(in srgb, var(--accent) 15%, white) !important; }
+.ring-violet-400 { --tw-ring-color: color-mix(in srgb, var(--accent) 35%, white) !important; }
 .ring-violet-500 { --tw-ring-color: var(--accent) !important; }
 .border-t-violet-600 { border-top-color: var(--accent) !important; }
 .from-violet-500 { --tw-gradient-from: var(--accent) !important; }
-.from-violet-50 { --tw-gradient-from: color-mix(in srgb, var(--accent) 5%, white) !important; }
+.from-violet-50 { --tw-gradient-from: color-mix(in srgb, var(--accent) 6%, white) !important; }
 .to-violet-600 { --tw-gradient-to: var(--accent-hover) !important; }
 
 input[type="checkbox"] {
@@ -127,17 +136,18 @@ input[type="checkbox"] {
 }
 
 .border-dashed {
-  border-color: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
+/* Completed states */
 .bg-emerald-500 { background-color: #34d399 !important; backdrop-filter: none; }
-.bg-emerald-50\/30, .bg-emerald-50\/50 { backdrop-filter: blur(4px) brightness(105%); }
-
+.bg-emerald-50\/30, .bg-emerald-50\/50 { backdrop-filter: blur(4px); }
 .from-emerald-500 { --tw-gradient-from: #34d399 !important; }
 .to-emerald-600 { --tw-gradient-to: #10b981 !important; }
 
-.bg-zinc-50 { background: rgba(255, 255, 255, 0.6) !important; }
-.border-zinc-200 { border-color: rgba(0, 0, 0, 0.035) !important; }
-.border-zinc-100 { border-color: rgba(0, 0, 0, 0.02) !important; }
-.border-emerald-100 { border-color: rgba(52, 211, 153, 0.15) !important; }
-.border-emerald-200 { border-color: rgba(52, 211, 153, 0.2) !important; }
+/* Zinc layers — contrast between levels */
+.bg-zinc-50 { background: rgba(245, 246, 250, 0.7) !important; }
+.border-zinc-200 { border-color: rgba(0, 0, 0, 0.06) !important; }
+.border-zinc-100 { border-color: rgba(0, 0, 0, 0.035) !important; }
+.border-emerald-100 { border-color: rgba(52, 211, 153, 0.18) !important; }
+.border-emerald-200 { border-color: rgba(52, 211, 153, 0.25) !important; }
