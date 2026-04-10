@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/header";
 import { NotifChecker } from "@/components/notif-checker";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AuthGate } from "@/components/auth-gate";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,9 +33,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-zinc-50">
         <ThemeProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <NotifChecker />
+          <AuthGate>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <NotifChecker />
+          </AuthGate>
         </ThemeProvider>
       </body>
     </html>
